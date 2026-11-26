@@ -11,7 +11,9 @@ public static class DbInitializer
     public static async Task InicializarAsync(
         ConectaInventoryContext db, IPasswordHasher<Usuario> hasher, bool sembrarUsuariosDemo)
     {
-        await db.Database.EnsureCreatedAsync();
+        if (!db.Database.GetMigrations().Any())
+            throw new InvalidOperationException("No hay migraciones. Genere la migración inicial o conserve las de su rama antes de iniciar.");
+        await db.Database.MigrateAsync();
 
         if (!await db.Categorias.AnyAsync())
         {
@@ -40,6 +42,24 @@ public static class DbInitializer
         }
 
         await db.SaveChangesAsync();
+        if (sembrarUsuariosDemo)
+        {
+            foreach (var demo in new[] { (Login: "beneficiario", Nombre: "Beneficiario Demo", Clave: "Beneficiario123*"), (Login: "beneficiario2", Nombre: "Beneficiario Demo 2", Clave: "Beneficiario234*") })
+            {
+                var usuario = await db.Usuarios.SingleOrDefaultAsync(u=>u.NombreUsuario==demo.Login);
+                if (usuario == null)
+                {
+                    usuario = CrearUsuario(hasher, demo.Login, demo.Nombre, demo.Clave, RolUsuario.Beneficiario);
+                    db.Usuarios.Add(usuario);
+                    await db.SaveChangesAsync();
+                }
+                if (usuario.Rol == RolUsuario.Beneficiario && !await db.Beneficiarios.AnyAsync(b=>b.UsuarioId==usuario.Id))
+                {
+                    db.Beneficiarios.Add(new Beneficiario {UsuarioId=usuario.Id});
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
     }
 
     private static Usuario CrearUsuario(IPasswordHasher<Usuario> hasher, string login, string nombre, string clave, RolUsuario rol)

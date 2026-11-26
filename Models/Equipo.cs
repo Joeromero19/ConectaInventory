@@ -36,7 +36,8 @@ public class Equipo
 
     public CodigoQR? CodigoQR { get; set; }
     public ICollection<MovimientoInventario> Movimientos { get; set; } = new List<MovimientoInventario>();
-    public ICollection<Prestamo> Prestamos { get; set; } = new List<Prestamo>();
+    public ICollection<DetallePrestamo> DetallesPrestamo { get; set; } = new List<DetallePrestamo>();
+    [Timestamp] public byte[] Version { get; set; } = null!;
 }
 
 // Un equipo tiene como maximo un QR; reimprimir no cambia el valor
@@ -77,14 +78,3 @@ public class MovimientoInventario
     public Usuario Responsable { get; set; } = null!;
 }
 
-// Entidad minima del Modulo 02: el Modulo 01 solo la lee para aplicar reglas de integracion
-public class Prestamo
-{
-    public int Id { get; set; }
-
-    public int EquipoId { get; set; }
-    public Equipo Equipo { get; set; } = null!;
-
-    public EstadoPrestamo Estado { get; set; }
-    public DateTime FechaInicio { get; set; }
-}

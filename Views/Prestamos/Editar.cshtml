@@ -1,0 +1,16 @@
+@model SolicitudPrestamo
+@{ ViewData["Title"]="Solicitud"; var categorias=(List<CategoriaEquipo>)ViewBag.Categorias; var disp=(Dictionary<int,int>)ViewBag.Disponibilidad; }
+<h1 class="h3">@(Model.Id==0?"Crear solicitud de préstamo":"Modificar "+Model.Radicado)</h1>
+<p>La disponibilidad es orientativa. Una solicitud insuficiente puede radicarse para evaluación.</p>
+@if(Model.Estado==EstadoSolicitudPrestamo.PendienteAjuste){<div class="alert alert-warning">Propuesta de ajuste: @Model.MotivoDecision. Revise las cantidades propuestas y confirme sus cambios.</div>}
+<form asp-action="Guardar" method="post">
+<input type="hidden" name="id" value="@Model.Id"/>
+<div class="row mb-3"><div class="col"><label>Inicio</label><input required id="inicio" type="date" name="inicio" value="@Model.FechaInicioPrevista.ToString("yyyy-MM-dd")" class="form-control"/></div><div class="col"><label>Fin</label><input required id="fin" type="date" name="fin" value="@Model.FechaFinPrevista.ToString("yyyy-MM-dd")" class="form-control"/></div></div>
+<label>Propósito</label><textarea name="proposito" maxlength="350" required class="form-control mb-3">@Model.Proposito</textarea>
+<label>Institución representada (vacío para préstamo individual)</label><input name="institucion" maxlength="160" value="@Model.InstitucionRepresentada" class="form-control mb-3"/>
+<table class="table"><thead><tr><th>Categoría</th><th>Disponible orientativo</th><th>Cantidad solicitada (0 = no incluir)</th></tr></thead><tbody>@foreach(var c in categorias){var d=Model.Detalles.FirstOrDefault(x=>x.CategoriaEquipoId==c.Id);<tr><td>@c.Nombre</td><td data-categoria="@c.Id">@disp.GetValueOrDefault(c.Id)</td><td><input type="number" min="0" max="10000" name="cantidades[@c.Id]" value="@(d?.CantidadPropuesta ?? d?.CantidadSolicitada ?? 0)" class="form-control" required/></td></tr>}</tbody></table>
+<button type="button" id="consultar" class="btn btn-outline-primary">Consultar disponibilidad</button> <button class="btn btn-primary">Confirmar solicitud</button> <a asp-action="Index">Cancelar</a>
+<p id="mensaje" class="mt-2" role="status"></p></form>
+@section Scripts {<script>
+const actualizar=async()=>{const i=document.getElementById('inicio').value,f=document.getElementById('fin').value,m=document.getElementById('mensaje');try{const p=new URLSearchParams({inicio:i,fin:f,id:'@Model.Id'});const r=await fetch('@Url.Action("Disponibilidad")?'+p);if(!r.ok)throw Error();const d=await r.json();document.querySelectorAll('[data-categoria]').forEach(x=>x.textContent=d[x.dataset.categoria]??0);m.textContent='Disponibilidad actualizada.';}catch{m.textContent='No se pudo consultar: revise las fechas.';}};document.getElementById('consultar').addEventListener('click',actualizar);
+</script>}

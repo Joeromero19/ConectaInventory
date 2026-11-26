@@ -1,7 +1,7 @@
 namespace ConectaInventory.Models;
 
 // Roles del sistema (documento, seccion 9.2.1)
-public enum RolUsuario { Bodeguero, Administrador, SoporteTecnico }
+public enum RolUsuario { Bodeguero, Administrador, SoporteTecnico, Beneficiario }
 
 // Nombres de rol como constantes para usarlos en [Authorize(Roles = ...)]
 public static class RolNombre
@@ -9,6 +9,7 @@ public static class RolNombre
     public const string Bodeguero = nameof(RolUsuario.Bodeguero);
     public const string Administrador = nameof(RolUsuario.Administrador);
     public const string SoporteTecnico = nameof(RolUsuario.SoporteTecnico);
+    public const string Beneficiario = nameof(RolUsuario.Beneficiario);
 }
 
 // Ciclo de vida del equipo (diagrama DE-S01-01)
@@ -35,4 +36,4 @@ public enum ResultadoDiagnostico { Apto, Reparable, NoApto }
 public enum EstadoSolicitudBaja { Solicitada, Rechazada, Ejecutada }
 
 // Prestamos: pertenecen al Modulo 02, aqui solo se consultan para validar reglas de integracion
-public enum EstadoPrestamo { Reservado, Activo, Devuelto, Vencido }
+public enum EstadoPrestamo { Reservado, Activo, Devuelto, Vencido, Cerrado }

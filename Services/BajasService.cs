@@ -72,6 +72,8 @@ public class BajasService
             return Resultado.Error("El equipo no existe.");
         if (equipo.Estado == EstadoEquipo.BajaDefinitiva)
             return Resultado.Error("El equipo ya fue dado de baja.");
+        if (equipo.Estado == EstadoEquipo.Prestado || await _db.DetallesPrestamo.AnyAsync(d=>d.EquipoId==equipo.Id && (d.Prestamo.Estado==EstadoPrestamo.Activo || d.Prestamo.Estado==EstadoPrestamo.Vencido)))
+            return Resultado.Error("No se puede solicitar baja de un equipo prestado.");
 
         var diagnostico = await _db.Diagnosticos
             .Where(d => d.EquipoId == equipo.Id)
@@ -129,10 +131,10 @@ public class BajasService
         }
 
         // Regla de integracion con el Modulo 02: no se da de baja un equipo con prestamo activo
-        var conPrestamo = await _db.Prestamos.AnyAsync(p => p.EquipoId == solicitud.EquipoId &&
-            (p.Estado == EstadoPrestamo.Activo || p.Estado == EstadoPrestamo.Reservado));
+        var conPrestamo = await _db.DetallesPrestamo.AnyAsync(p => p.EquipoId == solicitud.EquipoId &&
+            (p.Prestamo.Estado == EstadoPrestamo.Activo || p.Prestamo.Estado == EstadoPrestamo.Vencido));
         if (conPrestamo)
-            return Resultado.Error("El equipo tiene un prestamo activo o reservado: la baja queda bloqueada.");
+            return Resultado.Error("El equipo tiene un prestamo activo o vencido: la baja queda bloqueada.");
 
         if (solicitud.Equipo.Estado is not (EstadoEquipo.EnDiagnostico or EstadoEquipo.EnMantenimiento))
             return Resultado.Error($"El equipo esta en estado {solicitud.Equipo.Estado.Texto()} y no admite baja.");
