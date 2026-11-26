@@ -1,0 +1,31 @@
+@model ReubicarVM
+@{
+    ViewData["Title"] = "Reubicacion de equipo";
+}
+
+<h1 class="h3 mb-3">Reubicacion de equipo</h1>
+<p class="text-muted">Digite el serial o escanee el QR (ver Escaneo QR). El traslado y su historial se guardan juntos.</p>
+
+<form asp-action="Reubicar" method="post" class="col-lg-6">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Serial" class="form-label"></label>
+        <input asp-for="Serial" class="form-control" />
+        <span asp-validation-for="Serial" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="UbicacionDestinoId" class="form-label"></label>
+        <select asp-for="UbicacionDestinoId" asp-items="Model.Ubicaciones" class="form-select">
+            <option value="0">Seleccione...</option>
+        </select>
+        <span asp-validation-for="UbicacionDestinoId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Motivo" class="form-label"></label>
+        <input asp-for="Motivo" class="form-control" />
+        <span asp-validation-for="Motivo" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar movimiento</button>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

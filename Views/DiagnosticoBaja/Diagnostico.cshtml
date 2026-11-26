@@ -1,0 +1,28 @@
+@model DiagnosticoVM
+@{
+    ViewData["Title"] = "Diagnostico tecnico";
+}
+
+<h1 class="h3 mb-3">Diagnostico tecnico</h1>
+<p class="text-muted">Apto: queda Disponible. Reparable: pasa a Mantenimiento. No Apto: queda en Diagnostico a la espera de una solicitud de baja (una falla no genera baja automatica).</p>
+
+<form asp-action="Diagnostico" method="post" class="col-lg-6">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Serial" class="form-label"></label>
+        <input asp-for="Serial" class="form-control" />
+        <span asp-validation-for="Serial" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Hallazgos" class="form-label"></label>
+        <textarea asp-for="Hallazgos" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Hallazgos" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Resultado" class="form-label"></label>
+        <select asp-for="Resultado" asp-items="Html.GetEnumSelectList<ResultadoDiagnostico>()" class="form-select"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar diagnostico</button>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

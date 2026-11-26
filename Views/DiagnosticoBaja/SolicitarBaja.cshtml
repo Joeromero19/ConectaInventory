@@ -1,0 +1,24 @@
+@model SolicitarBajaVM
+@{
+    ViewData["Title"] = "Solicitar baja";
+}
+
+<h1 class="h3 mb-3">Solicitar baja definitiva</h1>
+<p class="text-muted">Requiere un diagnostico vigente con resultado No Apto. La decision final es del administrador.</p>
+
+<form asp-action="SolicitarBaja" method="post" class="col-lg-6">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Serial" class="form-label"></label>
+        <input asp-for="Serial" class="form-control" />
+        <span asp-validation-for="Serial" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Motivo" class="form-label"></label>
+        <textarea asp-for="Motivo" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Motivo" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,8 +1,27 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="h3 mb-1">Modulo 01: Gestion de Inventario y Activos</h1>
+<p class="text-muted">Fundacion ConectaRed. Opciones disponibles segun su rol.</p>
+
+<div class="row g-3">
+    @if (User.IsInRole(RolNombre.Bodeguero))
+    {
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="Inventario" asp-action="Recepcion">Recepcion de donaciones</a></div>
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="Identificacion" asp-action="Escanear">Escaneo QR</a></div>
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="Inventario" asp-action="Reubicar">Reubicacion de equipo</a></div>
+    }
+    @if (User.IsInRole(RolNombre.Administrador))
+    {
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="Inventario" asp-action="Alta">Alta de equipo</a></div>
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="Identificacion" asp-action="Index">Etiquetas QR</a></div>
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="DiagnosticoBaja" asp-action="Solicitudes">Decision de bajas</a></div>
+    }
+    @if (User.IsInRole(RolNombre.SoporteTecnico))
+    {
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="DiagnosticoBaja" asp-action="Diagnostico">Diagnostico tecnico</a></div>
+        <div class="col-md-6 col-lg-3"><a class="btn btn-outline-primary w-100 py-3" asp-controller="DiagnosticoBaja" asp-action="SolicitarBaja">Solicitud de baja</a></div>
+    }
+    <div class="col-md-6 col-lg-3"><a class="btn btn-outline-secondary w-100 py-3" asp-controller="Inventario" asp-action="Stock">Consulta de stock</a></div>
 </div>
