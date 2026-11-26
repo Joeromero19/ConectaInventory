@@ -85,11 +85,12 @@ public class StockVM
     [Display(Name = "Categoria")] public int? CategoriaId { get; set; }
     [Display(Name = "Estado")] public EstadoEquipo? Estado { get; set; }
     [Display(Name = "Ubicacion")] public int? UbicacionId { get; set; }
-    [Display(Name = "Solo disponibles para prestamo")] public bool SoloDisponibles { get; set; }
+    [Display(Name = "Solo unidades físicamente disponibles")] public bool SoloDisponibles { get; set; }
 
     [ValidateNever] public List<SelectListItem> Categorias { get; set; } = new();
     [ValidateNever] public List<SelectListItem> Ubicaciones { get; set; } = new();
     [ValidateNever] public List<StockItem> Resultados { get; set; } = new();
+    [ValidateNever] public Dictionary<string,int> DisponibilidadHoy { get; set; } = new();
 }
 
 public class StockItem

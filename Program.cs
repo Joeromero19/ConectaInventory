@@ -34,6 +34,7 @@ builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>
 builder.Services.AddScoped<InventarioService>();
 builder.Services.AddScoped<IdentificacionService>();
 builder.Services.AddScoped<BajasService>();
+builder.Services.AddScoped<PrestamoService>();
 
 var app = builder.Build();
 

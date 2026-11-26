@@ -4,6 +4,9 @@
 }
 
 <h1 class="h3 mb-3">Consulta de stock</h1>
+<div class="alert alert-info"><strong>Disponibilidad por categoría para hoy (inventario completo, descontando reservas):</strong>
+@foreach(var c in Model.DisponibilidadHoy){<span class="me-3">@c.Key: @c.Value</span>}
+<p class="mb-0">Las reservas son por cantidad, no por equipo individual. Los filtros y la columna de la tabla muestran disponibilidad física.</p></div>
 
 <form asp-action="Stock" method="get" class="row g-2 align-items-end mb-3">
     <div class="col-md-3">
@@ -35,12 +38,12 @@
 else
 {
     <p class="text-muted">
-        @Model.Resultados.Count equipo(s) en stock fisico, @Model.Resultados.Count(r => r.Disponible) disponible(s) para prestamo.
+        @Model.Resultados.Count equipo(s) en stock fisico, @Model.Resultados.Count(r => r.Disponible) físicamente disponible(s), antes de descontar reservas por categoría.
     </p>
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle">
             <thead>
-                <tr><th>Codigo</th><th>Serial</th><th>Equipo</th><th>Categoria</th><th>Ubicacion</th><th>Estado</th><th>Disponible</th></tr>
+                <tr><th>Codigo</th><th>Serial</th><th>Equipo</th><th>Categoria</th><th>Ubicacion</th><th>Estado</th><th>Disponible físicamente</th></tr>
             </thead>
             <tbody>
                 @foreach (var item in Model.Resultados)

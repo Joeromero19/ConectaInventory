@@ -103,12 +103,16 @@ namespace ConectaInventory.Controllers
 
         // ----- CU1.10 Consultar stock (cualquier rol con sesion) -----
 
+        [Authorize(Roles = RolNombre.Bodeguero + "," + RolNombre.Administrador + "," + RolNombre.SoporteTecnico)]
         [HttpGet]
-        public async Task<IActionResult> Stock(StockVM vm)
+        public async Task<IActionResult> Stock(StockVM vm, [FromServices] PrestamoService prestamos)
         {
             vm.Categorias = await _servicio.CategoriasAsync();
             vm.Ubicaciones = await _servicio.UbicacionesTodasAsync();
             vm.Resultados = await _servicio.ConsultarStockAsync(vm);
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
+            var disponibilidad = await prestamos.Disponibilidad(hoy, hoy);
+            vm.DisponibilidadHoy = vm.Categorias.ToDictionary(c=>c.Text,c=>disponibilidad.GetValueOrDefault(int.Parse(c.Value)));
             return View(vm);
         }
 

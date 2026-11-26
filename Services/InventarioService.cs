@@ -155,6 +155,8 @@ public class InventarioService
             return Resultado.Error("El equipo no existe.");
         if (equipo.Estado == EstadoEquipo.BajaDefinitiva)
             return Resultado.Error("Un equipo dado de baja no se puede reubicar.");
+        if (equipo.Estado == EstadoEquipo.Prestado)
+            return Resultado.Error("Un equipo prestado no se puede reubicar.");
 
         var destino = await _db.Ubicaciones.FindAsync(vm.UbicacionDestinoId);
         if (destino == null || !destino.Habilitada)
@@ -163,10 +165,10 @@ public class InventarioService
             return Resultado.Error("El equipo ya se encuentra en esa ubicacion.");
 
         // Regla de integracion con el Modulo 02: no se traslada un equipo prestado o reservado
-        var conPrestamo = await _db.Prestamos.AnyAsync(p => p.EquipoId == equipo.Id &&
-            (p.Estado == EstadoPrestamo.Activo || p.Estado == EstadoPrestamo.Reservado));
+        var conPrestamo = await _db.DetallesPrestamo.AnyAsync(p => p.EquipoId == equipo.Id &&
+            (p.Prestamo.Estado == EstadoPrestamo.Activo || p.Prestamo.Estado == EstadoPrestamo.Vencido));
         if (conPrestamo)
-            return Resultado.Error("El equipo tiene un prestamo activo o reservado: traslado bloqueado.");
+            return Resultado.Error("El equipo tiene un prestamo activo o vencido: traslado bloqueado.");
 
         _db.Movimientos.Add(new MovimientoInventario
         {
@@ -218,7 +220,7 @@ public class InventarioService
                 Estado = e.Estado,
                 // Stock fisico != disponibilidad efectiva: se excluyen prestados y reservados
                 Disponible = e.Estado == EstadoEquipo.Disponible &&
-                    !e.Prestamos.Any(p => p.Estado == EstadoPrestamo.Activo || p.Estado == EstadoPrestamo.Reservado)
+                    !e.DetallesPrestamo.Any(p => p.Prestamo.Estado == EstadoPrestamo.Activo || p.Prestamo.Estado == EstadoPrestamo.Vencido)
             })
             .ToListAsync();
 
