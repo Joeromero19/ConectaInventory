@@ -1,0 +1,11 @@
+@model List<PerfilTecnico>
+<h1>Perfiles técnicos</h1>
+<form asp-action="CrearTecnico" method="post" class="card card-body mb-3">
+<h2 class="h5">Registrar técnico</h2>
+<label>Usuario</label><input name="login" required maxlength="50" class="form-control"/>
+<label>Nombre</label><input name="nombre" required maxlength="100" class="form-control"/>
+<label>Clave inicial</label><input name="clave" type="password" required minlength="10" class="form-control"/>
+<label>Especialidad</label><input name="especialidad" required maxlength="100" class="form-control"/>
+<button class="btn btn-primary mt-2">Registrar</button></form>
+@foreach(var p in Model){<form asp-action="Perfil" method="post" class="card card-body mb-2"><input type="hidden" name="id" value="@p.Id"/><strong>@p.Usuario.NombreCompleto</strong><label>Especialidad</label><input name="especialidad" value="@p.Especialidad" required maxlength="100" class="form-control"/><label>Activo</label><select name="activo" class="form-select"><option value="true" selected="@p.Activo">Sí</option><option value="false" selected="@(!p.Activo)">No</option></select><label>Disponible</label><select name="disponible" class="form-select"><option value="true" selected="@p.Disponible">Sí</option><option value="false" selected="@(!p.Disponible)">No</option></select><button class="btn btn-outline-primary mt-2">Guardar</button></form>}
+<a asp-action="Index">Volver</a>

@@ -1,0 +1,3 @@
+@model List<AlertaPreventiva>
+<h1>Alertas preventivas</h1><a asp-action="Alertas" asp-route-vencidas="true">Vencidas</a> | <a asp-action="Alertas">Todas pendientes</a>
+<table class="table"><tr><th>Equipo</th><th>Fecha programada</th><th>Estado</th></tr>@foreach(var a in Model){<tr><td>@a.Equipo.Serial</td><td>@a.FechaProgramada.ToShortDateString()</td><td>@(a.FechaProgramada<=DateTime.Today?"Vencida":"Programada")</td></tr>}</table><a asp-action="Index">Volver</a>

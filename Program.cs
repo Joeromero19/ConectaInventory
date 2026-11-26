@@ -35,6 +35,7 @@ builder.Services.AddScoped<InventarioService>();
 builder.Services.AddScoped<IdentificacionService>();
 builder.Services.AddScoped<BajasService>();
 builder.Services.AddScoped<PrestamoService>();
+builder.Services.AddScoped<MantenimientoService>();
 
 var app = builder.Build();
 

@@ -60,6 +60,9 @@ public static class DbInitializer
                 }
             }
         }
+        foreach(var tecnico in await db.Usuarios.Where(u=>u.Rol==RolUsuario.SoporteTecnico).ToListAsync())
+            if(!await db.PerfilesTecnicos.AnyAsync(p=>p.UsuarioId==tecnico.Id)) db.PerfilesTecnicos.Add(new PerfilTecnico{UsuarioId=tecnico.Id});
+        await db.SaveChangesAsync();
     }
 
     private static Usuario CrearUsuario(IPasswordHasher<Usuario> hasher, string login, string nombre, string clave, RolUsuario rol)

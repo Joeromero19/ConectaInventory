@@ -41,6 +41,7 @@
                             }
                             @if (!User.IsInRole(RolNombre.Beneficiario)) { <li class="nav-item"><a class="nav-link" asp-controller="Inventario" asp-action="Stock">Stock</a></li> }
                             @if (User.IsInRole(RolNombre.Beneficiario) || User.IsInRole(RolNombre.Administrador) || User.IsInRole(RolNombre.Bodeguero)) { <li class="nav-item"><a class="nav-link" asp-controller="Prestamos" asp-action="Index">Préstamos</a></li> }
+                            @if (User.IsInRole(RolNombre.Administrador) || User.IsInRole(RolNombre.SoporteTecnico)) { <li class="nav-item"><a class="nav-link" asp-controller="Mantenimiento" asp-action="Index">Mantenimiento</a></li> }
                         </ul>
                         <form asp-controller="Account" asp-action="Logout" method="post" class="d-flex align-items-center">
                             <span class="navbar-text me-3">@User.Identity.Name (@(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value))</span>
@@ -67,7 +68,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">ConectaInventory - Analisis de Sistemas, Grupo 301 - Sprint 02 (Módulos 01 y 02)</div>
+        <div class="container">ConectaInventory - Analisis de Sistemas, Grupo 301 - Sprint 03 (Módulos 01, 02 y 03)</div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
