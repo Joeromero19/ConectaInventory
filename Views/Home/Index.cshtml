@@ -2,7 +2,7 @@
     ViewData["Title"] = "Inicio";
 }
 
-<h1 class="h3 mb-1">ConectaInventory: Inventario y préstamos</h1>
+<h1 class="h3 mb-1">ConectaInventory: Inventario, préstamos y mantenimiento</h1>
 <p class="text-muted">Fundacion ConectaRed. Opciones disponibles segun su rol.</p>
 
 <div class="row g-3">
@@ -25,4 +25,5 @@
     }
     @if (!User.IsInRole(RolNombre.Beneficiario)) { <div class="col-md-6 col-lg-3"><a class="btn btn-outline-secondary w-100 py-3" asp-controller="Inventario" asp-action="Stock">Consulta de stock</a></div> }
     @if (User.IsInRole(RolNombre.Beneficiario) || User.IsInRole(RolNombre.Administrador) || User.IsInRole(RolNombre.Bodeguero)) { <div class="col-md-6 col-lg-3"><a class="btn btn-primary w-100 py-3" asp-controller="Prestamos" asp-action="Index">Solicitudes e historial de préstamos</a></div> }
+    @if (User.IsInRole(RolNombre.Administrador) || User.IsInRole(RolNombre.SoporteTecnico)) { <div class="col-md-6 col-lg-3"><a class="btn btn-primary w-100 py-3" asp-controller="Mantenimiento" asp-action="Index">Mantenimiento y soporte</a></div> }
 </div>

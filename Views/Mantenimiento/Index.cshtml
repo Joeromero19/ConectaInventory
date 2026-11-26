@@ -1,0 +1,15 @@
+@model List<Mantenimiento>
+<h1>Mantenimiento y soporte técnico</h1>
+<a asp-action="Alertas" class="btn btn-outline-primary">Alertas preventivas</a>
+@if(User.IsInRole(RolNombre.Administrador)){<a asp-action="Tecnicos" class="btn btn-outline-secondary">Técnicos</a>}
+<h2 class="h5 mt-3">Remisiones pendientes de devolución</h2>
+<table class="table"><tr><th>ID detalle</th><th>Serial</th><th>Novedades</th></tr>@foreach(var d in (List<DetalleDevolucion>)ViewBag.Remisiones){<tr><td>@d.Id</td><td>@d.Equipo.Serial</td><td>@d.Novedades</td></tr>}</table>
+<form asp-action="Reportar" method="post" class="card card-body my-3">
+<h2 class="h5">Registrar reporte de falla</h2>
+<label>Serial del equipo</label><input name="serial" required class="form-control" />
+<label>Descripción de falla</label><textarea name="falla" required maxlength="1000" class="form-control"></textarea>
+<label>ID detalle de devolución (opcional; se vincula automáticamente si hay remisión)</label><input name="detalleDevolucionId" type="number" min="1" class="form-control" />
+<button class="btn btn-primary mt-2">Registrar</button></form>
+<table class="table"><thead><tr><th>Reporte</th><th>Equipo</th><th>Estado</th><th>Técnico</th><th></th></tr></thead><tbody>
+@foreach(var m in Model){<tr><td>@m.Id</td><td>@m.Equipo.Serial</td><td>@m.Estado</td><td>@(m.Tecnico?.NombreCompleto ?? "Sin asignar")</td><td><a asp-action="Detalle" asp-route-id="@m.Id">Detalle</a></td></tr>}
+</tbody></table>

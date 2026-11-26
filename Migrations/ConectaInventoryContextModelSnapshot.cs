@@ -90,6 +90,30 @@ namespace ConectaInventory.Migrations
                     b.ToTable("ActasEntrega");
                 });
 
+            modelBuilder.Entity("ConectaInventory.Models.AlertaPreventiva", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Atendida")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EquipoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaProgramada")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipoId");
+
+                    b.ToTable("AlertasPreventivas");
+                });
+
             modelBuilder.Entity("ConectaInventory.Models.Beneficiario", b =>
                 {
                     b.Property<int>("Id")
@@ -497,6 +521,94 @@ namespace ConectaInventory.Migrations
                     b.ToTable("EventosPrestamo");
                 });
 
+            modelBuilder.Entity("ConectaInventory.Models.HistorialMantenimiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MantenimientoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResponsableId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MantenimientoId");
+
+                    b.HasIndex("ResponsableId");
+
+                    b.ToTable("HistorialesMantenimiento");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.Mantenimiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Abierto")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("DetalleDevolucionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Falla")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReportadoPorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TecnicoId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DetalleDevolucionId")
+                        .IsUnique()
+                        .HasFilter("[DetalleDevolucionId] IS NOT NULL");
+
+                    b.HasIndex("EquipoId")
+                        .IsUnique()
+                        .HasFilter("[Abierto] = 1");
+
+                    b.HasIndex("ReportadoPorId");
+
+                    b.HasIndex("TecnicoId");
+
+                    b.ToTable("Mantenimientos");
+                });
+
             modelBuilder.Entity("ConectaInventory.Models.MovimientoInventario", b =>
                 {
                     b.Property<int>("Id")
@@ -536,6 +648,36 @@ namespace ConectaInventory.Migrations
                     b.HasIndex("UbicacionOrigenId");
 
                     b.ToTable("Movimientos");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.PerfilTecnico", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Disponible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Especialidad")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("PerfilesTecnicos");
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.Prestamo", b =>
@@ -632,6 +774,38 @@ namespace ConectaInventory.Migrations
                         .IsUnique();
 
                     b.ToTable("Recepciones");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.RepuestoMantenimiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CostoUnitario")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("MantenimientoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MantenimientoId");
+
+                    b.ToTable("RepuestosMantenimiento", t =>
+                        {
+                            t.HasCheckConstraint("CK_Repuesto_CantidadCosto", "[Cantidad] > 0 AND [CostoUnitario] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.SolicitudBaja", b =>
@@ -823,6 +997,17 @@ namespace ConectaInventory.Migrations
                         .IsRequired();
 
                     b.Navigation("Entrega");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.AlertaPreventiva", b =>
+                {
+                    b.HasOne("ConectaInventory.Models.Equipo", "Equipo")
+                        .WithMany()
+                        .HasForeignKey("EquipoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Equipo");
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.Beneficiario", b =>
@@ -1025,6 +1210,56 @@ namespace ConectaInventory.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("ConectaInventory.Models.HistorialMantenimiento", b =>
+                {
+                    b.HasOne("ConectaInventory.Models.Mantenimiento", null)
+                        .WithMany("Historial")
+                        .HasForeignKey("MantenimientoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ConectaInventory.Models.Usuario", "Responsable")
+                        .WithMany()
+                        .HasForeignKey("ResponsableId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Responsable");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.Mantenimiento", b =>
+                {
+                    b.HasOne("ConectaInventory.Models.DetalleDevolucion", "DetalleDevolucion")
+                        .WithMany()
+                        .HasForeignKey("DetalleDevolucionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ConectaInventory.Models.Equipo", "Equipo")
+                        .WithMany()
+                        .HasForeignKey("EquipoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ConectaInventory.Models.Usuario", "ReportadoPor")
+                        .WithMany()
+                        .HasForeignKey("ReportadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ConectaInventory.Models.Usuario", "Tecnico")
+                        .WithMany()
+                        .HasForeignKey("TecnicoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("DetalleDevolucion");
+
+                    b.Navigation("Equipo");
+
+                    b.Navigation("ReportadoPor");
+
+                    b.Navigation("Tecnico");
+                });
+
             modelBuilder.Entity("ConectaInventory.Models.MovimientoInventario", b =>
                 {
                     b.HasOne("ConectaInventory.Models.Equipo", "Equipo")
@@ -1058,6 +1293,17 @@ namespace ConectaInventory.Migrations
                     b.Navigation("UbicacionDestino");
 
                     b.Navigation("UbicacionOrigen");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.PerfilTecnico", b =>
+                {
+                    b.HasOne("ConectaInventory.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.Prestamo", b =>
@@ -1096,6 +1342,15 @@ namespace ConectaInventory.Migrations
                     b.Navigation("Donante");
 
                     b.Navigation("Responsable");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.RepuestoMantenimiento", b =>
+                {
+                    b.HasOne("ConectaInventory.Models.Mantenimiento", null)
+                        .WithMany("Repuestos")
+                        .HasForeignKey("MantenimientoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.SolicitudBaja", b =>
@@ -1167,6 +1422,13 @@ namespace ConectaInventory.Migrations
                     b.Navigation("DetallesPrestamo");
 
                     b.Navigation("Movimientos");
+                });
+
+            modelBuilder.Entity("ConectaInventory.Models.Mantenimiento", b =>
+                {
+                    b.Navigation("Historial");
+
+                    b.Navigation("Repuestos");
                 });
 
             modelBuilder.Entity("ConectaInventory.Models.Prestamo", b =>

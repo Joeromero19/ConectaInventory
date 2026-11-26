@@ -32,6 +32,12 @@ namespace ConectaInventory.Data
         public DbSet<DetalleDevolucion> DetallesDevolucion { get; set; }
         public DbSet<EventoPrestamo> EventosPrestamo { get; set; }
 
+        public DbSet<Mantenimiento> Mantenimientos { get; set; }
+        public DbSet<HistorialMantenimiento> HistorialesMantenimiento { get; set; }
+        public DbSet<RepuestoMantenimiento> RepuestosMantenimiento { get; set; }
+        public DbSet<PerfilTecnico> PerfilesTecnicos { get; set; }
+        public DbSet<AlertaPreventiva> AlertasPreventivas { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -81,6 +87,10 @@ namespace ConectaInventory.Data
             modelBuilder.Entity<DetalleDevolucion>().HasOne(d=>d.DetallePrestamo).WithMany().HasForeignKey(d=>new {d.PrestamoId,d.EquipoId}).HasPrincipalKey(d=>new {d.PrestamoId,d.EquipoId});
             modelBuilder.Entity<DetalleDevolucion>().HasIndex(d=>new {d.DevolucionId,d.EquipoId}).IsUnique();
 
+            modelBuilder.Entity<Mantenimiento>().HasIndex(m => m.EquipoId).IsUnique().HasFilter("[Abierto] = 1");
+            modelBuilder.Entity<Mantenimiento>().HasIndex(m => m.DetalleDevolucionId).IsUnique().HasFilter("[DetalleDevolucionId] IS NOT NULL");
+            modelBuilder.Entity<PerfilTecnico>().HasIndex(p => p.UsuarioId).IsUnique();
+            modelBuilder.Entity<RepuestoMantenimiento>().ToTable(t => t.HasCheckConstraint("CK_Repuesto_CantidadCosto", "[Cantidad] > 0 AND [CostoUnitario] >= 0"));
             // Sin borrado en cascada: la trazabilidad no se pierde y SQL Server
             // no admite varias rutas de cascada (origen/destino hacia la misma tabla)
             foreach (var fk in modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys()))

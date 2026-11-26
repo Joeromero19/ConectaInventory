@@ -29,6 +29,8 @@ public class BajasService
         var equipo = await _db.Equipos.FirstOrDefaultAsync(e => e.Serial == serial);
         if (equipo == null)
             return Resultado.Error("El equipo no existe.");
+        if (await _db.Mantenimientos.AnyAsync(m => m.EquipoId == equipo.Id && m.Abierto) || await _db.DetallesDevolucion.AnyAsync(d => d.EquipoId == equipo.Id && !d.InspeccionFavorable && equipo.Estado == EstadoEquipo.EnMantenimiento && !_db.Mantenimientos.Any(m => m.DetalleDevolucionId == d.Id)))
+            return Resultado.Error("Gestione la falla desde Mantenimiento.");
         if (!EstadosDiagnosticables.Contains(equipo.Estado))
             return Resultado.Error($"No se puede diagnosticar un equipo en estado {equipo.Estado.Texto()}.");
 
@@ -75,6 +77,7 @@ public class BajasService
         if (equipo.Estado == EstadoEquipo.Prestado || await _db.DetallesPrestamo.AnyAsync(d=>d.EquipoId==equipo.Id && (d.Prestamo.Estado==EstadoPrestamo.Activo || d.Prestamo.Estado==EstadoPrestamo.Vencido)))
             return Resultado.Error("No se puede solicitar baja de un equipo prestado.");
 
+        if (await _db.Mantenimientos.AnyAsync(m => m.EquipoId == equipo.Id && m.Abierto)) return Resultado.Error("Existe mantenimiento abierto.");
         var diagnostico = await _db.Diagnosticos
             .Where(d => d.EquipoId == equipo.Id)
             .OrderByDescending(d => d.Fecha).ThenByDescending(d => d.Id)
@@ -130,6 +133,7 @@ public class BajasService
             return await GuardarAsync(solicitud.Id, "Solicitud rechazada.");
         }
 
+        if (await _db.Mantenimientos.AnyAsync(m => m.EquipoId == solicitud.EquipoId && m.Abierto)) return Resultado.Error("Existe mantenimiento abierto.");
         // Regla de integracion con el Modulo 02: no se da de baja un equipo con prestamo activo
         var conPrestamo = await _db.DetallesPrestamo.AnyAsync(p => p.EquipoId == solicitud.EquipoId &&
             (p.Prestamo.Estado == EstadoPrestamo.Activo || p.Prestamo.Estado == EstadoPrestamo.Vencido));
