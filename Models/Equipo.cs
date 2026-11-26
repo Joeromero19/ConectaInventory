@@ -1,23 +1,90 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ConectaInventory.Models
+namespace ConectaInventory.Models;
+
+public class Equipo
 {
-    public class Equipo
-    {
-        [Key]
-        [Display(Name = "Número de Serial")]
-        public string NumSerial { get; set; }
+    public int Id { get; set; }
 
-        [Required(ErrorMessage = "La marca es obligatoria.")]
-        public string Marca { get; set; }
+    [NotMapped]
+    public string Identificador => $"EQU-{Id:D4}";
 
-        [Required(ErrorMessage = "El modelo es obligatorio.")]
-        public string Modelo { get; set; }
+    // Serial normalizado (mayusculas, sin espacios en los extremos) y unico
+    [Required, StringLength(100)]
+    public string Serial { get; set; } = string.Empty;
 
-        [Display(Name = "Estado Operativo")]
-        public string EstadoOperativo { get; set; } = "Disponible";
+    [Required, StringLength(80)]
+    public string Marca { get; set; } = string.Empty;
 
-        [Display(Name = "Ubicación ID")]
-        public int IdUbicacion { get; set; }
-    }
+    [Required, StringLength(80)]
+    public string Modelo { get; set; } = string.Empty;
+
+    [StringLength(500)]
+    public string? Especificaciones { get; set; }
+
+    public EstadoEquipo Estado { get; set; } = EstadoEquipo.Registrado;
+
+    public int RecepcionDonacionId { get; set; }
+    public RecepcionDonacion RecepcionDonacion { get; set; } = null!;
+
+    public int CategoriaEquipoId { get; set; }
+    public CategoriaEquipo Categoria { get; set; } = null!;
+
+    public int UbicacionBodegaId { get; set; }
+    public UbicacionBodega Ubicacion { get; set; } = null!;
+
+    public CodigoQR? CodigoQR { get; set; }
+    public ICollection<MovimientoInventario> Movimientos { get; set; } = new List<MovimientoInventario>();
+    public ICollection<Prestamo> Prestamos { get; set; } = new List<Prestamo>();
+}
+
+// Un equipo tiene como maximo un QR; reimprimir no cambia el valor
+public class CodigoQR
+{
+    public int Id { get; set; }
+
+    [Required, StringLength(50)]
+    public string Valor { get; set; } = string.Empty;
+
+    public int EquipoId { get; set; }
+    public Equipo Equipo { get; set; } = null!;
+
+    public int Reimpresiones { get; set; }
+    public DateTime? UltimaReimpresion { get; set; }
+}
+
+// Historial de traslados: origen, destino, responsable y fecha (HU-0102)
+public class MovimientoInventario
+{
+    public int Id { get; set; }
+
+    public int EquipoId { get; set; }
+    public Equipo Equipo { get; set; } = null!;
+
+    public int UbicacionOrigenId { get; set; }
+    public UbicacionBodega UbicacionOrigen { get; set; } = null!;
+
+    public int UbicacionDestinoId { get; set; }
+    public UbicacionBodega UbicacionDestino { get; set; } = null!;
+
+    public DateTime Fecha { get; set; }
+
+    [Required, StringLength(300)]
+    public string Motivo { get; set; } = string.Empty;
+
+    public int ResponsableId { get; set; }
+    public Usuario Responsable { get; set; } = null!;
+}
+
+// Entidad minima del Modulo 02: el Modulo 01 solo la lee para aplicar reglas de integracion
+public class Prestamo
+{
+    public int Id { get; set; }
+
+    public int EquipoId { get; set; }
+    public Equipo Equipo { get; set; } = null!;
+
+    public EstadoPrestamo Estado { get; set; }
+    public DateTime FechaInicio { get; set; }
 }

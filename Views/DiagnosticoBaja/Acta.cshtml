@@ -1,0 +1,25 @@
+@model ActaBaja
+@{
+    ViewData["Title"] = "Acta de baja";
+    var s = Model.Solicitud;
+}
+
+<h1 class="h3 mb-3">Acta de baja @Model.Numero</h1>
+
+<div class="card col-lg-8 mb-3">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Fecha:</strong> @Model.Fecha.ToString("yyyy-MM-dd HH:mm")</li>
+        <li class="list-group-item"><strong>Equipo:</strong> @s.Equipo.Identificador - @s.Equipo.Marca @s.Equipo.Modelo</li>
+        <li class="list-group-item"><strong>Serial:</strong> @s.Equipo.Serial</li>
+        <li class="list-group-item"><strong>Diagnostico:</strong> @s.Diagnostico.Resultado.Texto() - @s.Diagnostico.Hallazgos</li>
+        <li class="list-group-item"><strong>Justificacion tecnica:</strong> @s.Motivo (@s.Solicitante.NombreCompleto)</li>
+        <li class="list-group-item"><strong>Autorizada por:</strong> @(s.DecididaPor?.NombreCompleto ?? "-")</li>
+        @if (!string.IsNullOrWhiteSpace(s.DecisionMotivo))
+        {
+            <li class="list-group-item"><strong>Observacion:</strong> @s.DecisionMotivo</li>
+        }
+    </ul>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="window.print()">Imprimir</button>
+<a class="btn btn-outline-secondary" asp-action="Solicitudes">Volver</a>

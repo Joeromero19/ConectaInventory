@@ -1,0 +1,17 @@
+@model EtiquetaVM
+@{
+    ViewData["Title"] = "Etiqueta QR";
+}
+
+<h1 class="h3 mb-3">Etiqueta @Model.Equipo.Identificador</h1>
+
+<div class="card d-inline-block text-center p-3 mb-3">
+    <div style="width: 220px; max-width: 100%;">@Html.Raw(Model.Svg)</div>
+    <div class="fw-bold mt-2">@Model.Valor</div>
+    <div>@Model.Equipo.Marca @Model.Equipo.Modelo</div>
+    <div class="text-muted small">Serial: @Model.Equipo.Serial</div>
+</div>
+
+<p class="text-muted">Reimpresiones registradas: @Model.Reimpresiones</p>
+<button type="button" class="btn btn-primary" onclick="window.print()">Imprimir</button>
+<a class="btn btn-outline-secondary" asp-action="Index">Volver</a>

@@ -1,0 +1,36 @@
+@model EscanearVM
+@{
+    ViewData["Title"] = "Escaneo QR";
+}
+
+<h1 class="h3 mb-3">Escaneo QR</h1>
+<p class="text-muted">Haga clic en el campo y escanee la etiqueta con el lector, o escriba el codigo.</p>
+
+<form asp-action="Escanear" method="post" class="col-lg-6 mb-4">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Codigo" class="form-label"></label>
+        <input asp-for="Codigo" class="form-control" autofocus autocomplete="off" />
+        <span asp-validation-for="Codigo" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Validar lectura</button>
+</form>
+
+@if (Model.Equipo != null)
+{
+    <div class="card col-lg-6">
+        <div class="card-header bg-success text-white">Codigo valido</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Equipo:</strong> @Model.Equipo.Identificador - @Model.Equipo.Marca @Model.Equipo.Modelo</li>
+            <li class="list-group-item"><strong>Serial:</strong> @Model.Equipo.Serial</li>
+            <li class="list-group-item"><strong>Categoria:</strong> @Model.Equipo.Categoria.Nombre</li>
+            <li class="list-group-item"><strong>Estado:</strong> @Model.Equipo.Estado.Texto()</li>
+            <li class="list-group-item"><strong>Ubicacion:</strong> @Model.Equipo.Ubicacion.Nombre</li>
+        </ul>
+        <div class="card-footer">
+            <a class="btn btn-sm btn-outline-primary" asp-controller="Inventario" asp-action="Reubicar" asp-route-serial="@Model.Equipo.Serial">Reubicar este equipo</a>
+        </div>
+    </div>
+}
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

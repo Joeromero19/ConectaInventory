@@ -1,0 +1,46 @@
+@model List<Equipo>
+@{
+    ViewData["Title"] = "Etiquetas QR";
+}
+
+<h1 class="h3 mb-3">Etiquetas QR</h1>
+<p class="text-muted">Genere la etiqueta de un equipo nuevo o reimprima la existente (el codigo no cambia).</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Aun no hay equipos dados de alta.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-striped align-middle">
+            <thead><tr><th>Codigo</th><th>Serial</th><th>Equipo</th><th>Estado</th><th>QR</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>@e.Identificador</td>
+                        <td>@e.Serial</td>
+                        <td>@e.Marca @e.Modelo</td>
+                        <td>@e.Estado.Texto()</td>
+                        <td>@(e.CodigoQR == null ? "Sin QR" : e.CodigoQR.Valor)</td>
+                        <td>
+                            @if (e.CodigoQR == null)
+                            {
+                                <form asp-action="Generar" asp-route-id="@e.Id" method="post" class="d-inline">
+                                    <button class="btn btn-sm btn-primary" type="submit">Generar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="Reimprimir" asp-route-id="@e.Id" method="post" class="d-inline">
+                                    <button class="btn btn-sm btn-outline-primary" type="submit">Reimprimir</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

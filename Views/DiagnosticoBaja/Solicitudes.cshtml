@@ -1,0 +1,42 @@
+@model List<SolicitudBaja>
+@{
+    ViewData["Title"] = "Solicitudes de baja";
+}
+
+<h1 class="h3 mb-3">Solicitudes de baja</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay solicitudes de baja registradas.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-striped align-middle">
+            <thead><tr><th>Fecha</th><th>Equipo</th><th>Serial</th><th>Solicitante</th><th>Motivo</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.FechaSolicitud.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@s.Equipo.Identificador</td>
+                        <td>@s.Equipo.Serial</td>
+                        <td>@s.Solicitante.NombreCompleto</td>
+                        <td>@s.Motivo</td>
+                        <td>@s.Estado.Texto()</td>
+                        <td>
+                            @if (s.Estado == EstadoSolicitudBaja.Solicitada)
+                            {
+                                <a class="btn btn-sm btn-primary" asp-action="Evaluar" asp-route-id="@s.Id">Evaluar</a>
+                            }
+                            else if (s.Acta != null)
+                            {
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Acta" asp-route-id="@s.Id">Ver acta</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
